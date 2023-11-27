@@ -5,12 +5,13 @@ dotenv.config();
 const MONGODB_URIS = process.env.MONGODB_URI.split(',');
 
 const connectToDatabase = async () => {
-
+  console.log('indice pre env -> ' + currentIndex);
   let currentIndex = parseInt(process.env.CURRENT_MONGODB_URI_INDEX, 10);
+  console.log('indice post env-> ' + currentIndex);
   while (currentIndex < MONGODB_URIS.length) {
     try {
       await mongoose.connect(MONGODB_URIS[currentIndex], {
-        dbName: process.env.DB_NAME,
+        dbName: customersdb,
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useFindAndModify: false,
@@ -27,6 +28,7 @@ const connectToDatabase = async () => {
     } catch (error) {
       console.error(error.message);
       currentIndex += 1;
+      console.log('indice fallo +1-> ' + currentIndex);
     }
   }
 
