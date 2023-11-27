@@ -2,61 +2,38 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const MONGODB_URIS = process.env.MONGODB_URI.split(',');
+// Cadenas de conexión a las bases de datos
+const connectionStrings = [
+  'mongodb://mongo_db:27017',
+  'mongodb://mongodS1:27017/?directConnection=true&readPreference=secondaryPreferred',
+  'mongodb://mongodS2:27017/?directConnection=true&readPreference=secondaryPreferred'
+];
+
+// Configurar las opciones de conexión
+const connectionOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false
+};
 
 const connectToDatabase = async () => {
-  let currentIndex = parseInt(process.env.CURRENT_MONGODB_URI_INDEX, 10);
-  console.log('indice post env-> ' + currentIndex);
-  console.log('cadena mongodb -> ' + MONGODB_URIS[currentIndex])
-  while (currentIndex < MONGODB_URIS.length) {
+  let connected = false;
+
+  for (const connectionString of connectionStrings) {
     try {
-      await mongoose.connect(MONGODB_URIS[currentIndex], {
-        dbName: customersdb,
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-      });
-
-      console.log(`Mongodb connected...\nMongoose Connect Options:
-        MONGODB_URI: ${MONGODB_URIS[currentIndex]}
-        DB_NAME: ${process.env.DB_NAME}`);
-
-      // Actualizamos el índice para la próxima vez que se inicie la aplicación
-      process.env.CURRENT_MONGODB_URI_INDEX = currentIndex;
-
-      break; // Salimos del bucle si la conexión es exitosa
+      await mongoose.connect(connectionString, connectionOptions);
+      console.log(`Connected to MongoDB: ${connectionString}`);
+      connected = true;
+      break; // Salir del bucle si la conexión es exitosa
     } catch (error) {
-      console.error(error.message);
-      currentIndex += 1;
-      console.log('indice fallo +1-> ' + currentIndex);
+      console.error(`Failed to connect to MongoDB: ${connectionString}. Error: ${error.message}`);
     }
   }
 
-  if (currentIndex === MONGODB_URIS.length) {
-    console.error('Ningún nodo activo.');
+  if (!connected) {
+    console.error('All MongoDB connections failed. Cluster is down.');
+    // Puedes agregar código aquí para manejar el caso en que todas las conexiones fallen
   }
-
-  // Resto del código de manejo de eventos y limpieza
-  mongoose.connection.on('connected', () => {
-    console.log('Mongoose connected to db...');
-  });
-
-  mongoose.connection.on('error', err => {
-    console.log(err.message);
-  });
-
-  mongoose.connection.on('disconnected', () => {
-    console.log('Mongoose connection is disconnected...');
-  });
-
-  process.on('SIGINT', () => {
-    mongoose.connection.close(() => {
-      console.log(
-        'Mongoose connection is disconnected due to app termination...'
-      );
-      process.exit(0);
-    });
-  });
 };
 
 export default connectToDatabase;
