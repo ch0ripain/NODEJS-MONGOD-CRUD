@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # mongod service
+  mongo_db:
+    container_name: mongod
+    image: mongo:latest
+    restart: always
+    ports:
+      - 30017:27017
+    volumes: 
+      - mongo_db:/data/db
+    networks:
+      - mongoCluster
+    command: ["mongod", "--replSet", "rs0"]
+    #entrypoint: ["mongod", "--replSet", "myReplicaSet"]
+
+  # mongod r1 service
+  mongodS1:
+    image: mongo:latest
+    container_name: mongod_s1
+    ports:
+      - "30018:27017"
+    volumes: 
+      - mongo_s1:/data/db
+    networks:
+      - mongoCluster
+    depends_on:
+      - mongo_db
+    restart: always
+    command: ["mongod", "--replSet", "rs0"]
+    #entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+    # command: mongod --replSet myReplicaSet --bind_ip mongo_db,mongodR1
+  
+  # mongod r2 service
+  mongodS2:
+    image: mongo:latest
+    container_name: mongod_s2
+    ports:
+      - "30019:27017"
+    volumes: 
+      - mongo_s2:/data/db
+    networks:
+      - mongoCluster
+    depends_on:
+      - mongo_db
+    restart: always
+    command: ["mongod", "--replSet", "rs0"]
+    #entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+    # command: mongod --replSet myReplicaSet --bind_ip mongo_db,mongodR2
+
+  # Node APP service
+  app:
+    ports:
+      - 4000:3000
+    env_file: ./.env
+    environment:
+      - PORT=$PORT
+      - MONGODB_URI=$MONGODB_URI
+      - DB_NAME=$DB_NAME
+      - NAME=$NAME
+    depends_on:
+      - mongo_db
+    volumes:
+    - .:/usr/src/app
+    networks:
+      - mongoCluster
+    build: .
+
+volumes:
+  mongo_db: {}
+  mongo_s1: {}
+  mongo_s2: {}
+
+networks:
+  mongoCluster:
+    driver: bridge

@@ -1,0 +1,69 @@
+#Index route
+GET http://localhost:4000/
+
+###Get a list of all products
+GET http://localhost:4000/allCustomers
+
+### Create a product
+POST http://localhost:4000/customers/add
+Content-Type: application/json
+
+{
+  "name": "Leandro Rufino",
+  "email": "leo@gmail.com",
+  "phone": "3885727014"
+}
+
+### GET a product by id
+GET http://localhost:4000/customers/find/656335e7608423002ca61fff
+
+### Update a product by id
+PATCH  http://localhost:4000/customers/update/6562e4138f2a4b00134eadd2
+Content-Type: application/json
+
+{
+  "name": "Amaru Segovia"
+}
+
+
+### Delete a product by id
+DELETE  http://localhost:4000/delete/656337de608423002ca6200d
+
+### 404 route Not Found
+GET http://localhost:4000/404
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#hrXWgw4Q127uqZJ3
