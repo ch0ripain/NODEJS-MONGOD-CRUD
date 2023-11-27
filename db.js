@@ -7,6 +7,7 @@ const MONGODB_URIS = process.env.MONGODB_URI.split(',');
 const connectToDatabase = async () => {
   let currentIndex = parseInt(process.env.CURRENT_MONGODB_URI_INDEX, 10);
   console.log('indice post env-> ' + currentIndex);
+  console.log('cadena mongodb -> ' + MONGODB_URIS[currentIndex])
   while (currentIndex < MONGODB_URIS.length) {
     try {
       await mongoose.connect(MONGODB_URIS[currentIndex], {
