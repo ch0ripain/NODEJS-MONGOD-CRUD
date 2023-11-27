@@ -55,10 +55,10 @@ services:
       - 4000:3000
     env_file: ./.env
     environment:
-      - PORT=$PORT
-      - MONGODB_URI=$MONGODB_URI
-      - DB_NAME=$DB_NAME
-      - NAME=$NAME
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongo_db:27017,mongodb://mongodS1:27017/?directConnection=true&readPreference=secondaryPreferred,mongodb://mongodS2:27017/?directConnection=true&readPreference=secondaryPreferred
+      - DB_NAME=customersdb
+      - NAME=Grupo Pomodoro
     depends_on:
       - mongo_db
     volumes:
