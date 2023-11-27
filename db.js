@@ -5,7 +5,6 @@ dotenv.config();
 const MONGODB_URIS = process.env.MONGODB_URI.split(',');
 
 const connectToDatabase = async () => {
-  console.log('indice pre env -> ' + currentIndex);
   let currentIndex = parseInt(process.env.CURRENT_MONGODB_URI_INDEX, 10);
   console.log('indice post env-> ' + currentIndex);
   while (currentIndex < MONGODB_URIS.length) {
