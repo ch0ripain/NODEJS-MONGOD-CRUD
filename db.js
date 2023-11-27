@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const MONGODB_URIS = process.env.MONGODB_URI.split(',');
 
